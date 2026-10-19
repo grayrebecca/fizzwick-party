@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- A made-up shop, so keep it out of search results. Do not add a robots.txt Disallow: the AccessLens scanner obeys it. -->
+<meta name="robots" content="noindex">
+<!-- Workshop barrier: an unhelpful page title in the browser tab -->
+<title>Home</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Deliberately inaccessible demo shop for AccessLens "Spot the Barrier" bingo.
+   Every barrier is marked with data-barrier so the presenter answer key (#answers) can reveal it. */
+:root{
+  --plum:#3B1F4A; --pink:#E0457B; --sun:#FFD23F; --mint:#BDEBD6; --sky:#CFE8FF;
+  --paper:#FFFFFF; --soft:#FFF4F8; --ink:#2A2230; --line:#EFE6EC;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+[hidden]:not([hidden=until-found i]){display:none!important}
+img{max-width:100%}
+/* BARRIER 10: focus outline removed everywhere */
+*:focus{outline:none}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Nunito',system-ui,sans-serif;font-size:16px;overflow-x:hidden}
+a{color:var(--pink)}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:24px}
+
+/* Demo notice: readable on purpose, so it is not mistaken for a barrier */
+.demo{background:var(--plum);color:#fff;text-align:center;font-size:14px;font-weight:700;padding-block:8px}
+
+/* promo strip — BARRIER 1: text hard to read */
+.strip{background:#fff;border-bottom:1px solid var(--line);text-align:center;font-size:13px;padding-block:8px;color:#D9D4D7}
+
+/* header — BARRIER 15: nav can't wrap, gets chopped when zoomed */
+.head{height:72px;overflow:hidden}
+.head .wrap{display:flex;align-items:center;gap:28px;height:72px;white-space:nowrap}
+.logo{font-family:'Fredoka',sans-serif;font-weight:700;font-size:30px;color:var(--plum);text-decoration:none;letter-spacing:-.5px}
+.logo span{color:var(--pink)}
+.nav{display:flex;gap:26px;flex-shrink:0}
+.nav a{color:var(--plum);text-decoration:none;font-weight:700;font-size:15px}
+.icons{margin-left:auto;display:flex;gap:6px;flex-shrink:0}
+.ibtn{width:40px;height:40px;border-radius:50%;border:0;background:var(--soft);display:grid;place-items:center;cursor:pointer;color:var(--plum)}
+.ibtn svg{width:20px;height:20px}
+
+/* hero carousel — BARRIER 8 + 2: auto-rotates, no pause; BARRIER 15: fixed text box */
+.hero{position:relative;height:400px;overflow:hidden;border-radius:28px;margin-top:8px}
+.slide{position:absolute;inset:0;opacity:0;transition:opacity .6s}
+.slide.on{opacity:1}
+.slide .art{position:absolute;right:0;top:0;bottom:0;width:55%}
+.slide .copy{position:absolute;left:56px;top:70px;width:520px}
+.eyebrow{font-weight:800;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--plum);opacity:.8}
+.big{font-family:'Fredoka',sans-serif;font-weight:700;font-size:58px;line-height:1.02;color:var(--plum);margin-top:10px}
+.lede{font-size:18px;color:var(--plum);margin-top:14px;max-width:420px}
+/* BARRIER (workshop): button fails contrast — white on yellow */
+.btn{display:inline-block;margin-top:22px;background:var(--sun);color:#fff;font-weight:800;padding:14px 26px;border-radius:999px;text-decoration:none;font-size:16px;border:0;cursor:pointer}
+.dots{position:absolute;left:56px;bottom:26px;display:flex;gap:8px}
+.dots i{width:9px;height:9px;border-radius:50%;background:rgba(59,31,74,.25)}
+.dots i.on{background:var(--plum)}
+
+/* section titles are styled divs, never headings — BARRIER 11 */
+.sec{margin-top:64px}
+.title{font-family:'Fredoka',sans-serif;font-weight:600;font-size:32px;color:var(--plum)}
+.sub{color:#8f8791;margin-top:4px}
+
+/* products */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;margin-top:24px}
+.card{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:#fff;position:relative;height:372px}
+.card img{display:block;width:100%;height:190px;object-fit:cover;background:var(--soft)}
+.card .body{padding:14px 16px}
+.pname{font-weight:800;color:var(--plum)}
+.price{font-family:'Fredoka',sans-serif;font-weight:600;font-size:20px;margin-top:4px}
+.row{display:flex;align-items:center;gap:8px;margin-top:10px}
+/* BARRIER 6: stock shown only by red/green dot */
+.stock{width:11px;height:11px;border-radius:50%}
+.stock.in{background:#3BB54A}.stock.out{background:#E0322B}
+/* BARRIER 3: tiny, cramped tap targets */
+.sizes{display:flex;gap:2px;margin-left:auto}
+.sizes button{width:18px;height:18px;padding:0;font-size:9px;border:1px solid #ddd;background:#fff;border-radius:4px;cursor:pointer;color:var(--plum)}
+.heart{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;border:0;background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--pink)}
+.heart svg{width:18px;height:18px}
+.add{margin-top:12px;width:100%;border:0;border-radius:12px;background:var(--plum);color:#fff;font-weight:800;padding:10px;cursor:pointer;font-family:inherit}
+
+/* video + story */
+.split{display:grid;grid-template-columns:1.1fr 1fr;gap:36px;align-items:start;margin-top:24px}
+.video{position:relative;border-radius:20px;overflow:hidden;background:var(--plum);aspect-ratio:16/9;max-width:100%}
+.video canvas{width:100%;height:100%;display:block}
+.vbar{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:12px;padding:10px 14px;background:linear-gradient(transparent,rgba(0,0,0,.55));color:#fff;font-size:13px}
+.vbar .track{flex:1;height:4px;background:rgba(255,255,255,.3);border-radius:4px;overflow:hidden}
+.vbar .fill{height:100%;width:0;background:var(--sun)}
+.vbar svg{width:18px;height:18px}
+/* BARRIER 5 + workshop contrast: wall of pale grey body text */
+.story{color:#A7A1A8;font-size:15px;line-height:1.5}
+/* BARRIER 16: links styled exactly like the text */
+.story a{color:inherit;text-decoration:none}
+
+/* inspo */
+.inspo{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+.inspo img{width:100%;height:200px;border-radius:16px;background:var(--soft);display:block}
+.posts{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:20px}
+.post{background:var(--soft);border-radius:20px;padding:22px}
+.post .pt{font-weight:800;color:var(--plum);font-size:18px}
+.post p{margin:.4em 0 .8em;color:#6f6572}
+
+/* delivery table — workshop: no header row */
+.tablewrap{overflow-x:auto;margin-top:20px}
+table{border-collapse:collapse;width:100%;max-width:720px}
+td{border-bottom:1px solid var(--line);padding:12px 10px;text-align:left}
+tr:first-child td{font-weight:800;color:var(--plum);background:var(--soft)}
+
+/* FAQ lump */
+.faq{margin-top:20px;display:grid;gap:14px;max-width:760px}
+.faq b{color:var(--plum)}
+
+/* footer */
+.foot{margin-top:72px;background:var(--plum);color:#E9DDEE;padding-block:40px}
+.foot .wrap{display:flex;flex-wrap:wrap;gap:40px;justify-content:space-between}
+.foot a{color:#E9DDEE}
+.social{display:flex;gap:2px;margin-top:10px}
+.social a{width:14px;height:14px;display:grid;place-items:center;background:rgba(255,255,255,.15);border-radius:3px}
+.social svg{width:10px;height:10px}
+.fine{font-size:12px;color:#9C8BA5;margin-top:24px;width:100%}
+
+/* newsletter popup — BARRIER 7 (close is a faint 10px ×), 14 (placeholders only), workshop: no error message */
+.scrim{position:fixed;inset:0;background:rgba(42,34,48,.55);display:grid;place-items:center;padding:16px;z-index:20}
+.modal{background:#fff;border-radius:24px;max-width:460px;width:100%;padding:34px 30px;position:relative;text-align:center}
+.x{position:absolute;top:10px;right:12px;font-size:10px;line-height:1;color:#EDEDED;background:none;border:0;padding:0;cursor:pointer}
+.modal .big{font-size:36px}
+.modal input{width:100%;margin-top:10px;padding:13px 14px;border:2px solid var(--line);border-radius:12px;font:inherit}
+.modal input.bad{border-color:#E0322B}
+.modal .btn{width:100%;margin-top:14px;background:var(--pink)}
+
+/* presenter answer key (#answers) */
+.key [data-barrier]{outline:3px dashed var(--pink)!important;outline-offset:3px;position:relative}
+.key [data-barrier]::after{content:attr(data-barrier);position:absolute;z-index:30;top:4px;left:4px;background:var(--pink);color:#fff;font:800 11px/1 'Nunito',sans-serif;padding:5px 8px;border-radius:999px;white-space:nowrap;pointer-events:none;max-width:260px;overflow:hidden;text-overflow:ellipsis}
+.keybar{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;background:var(--plum);color:#fff;border-radius:14px;padding:10px 14px;font-size:13px;font-weight:700;display:none}
+.key .keybar{display:block}
+</style>
+</head>
+<body>
+
+<div class="demo">Demo site by Pixel Guides. Not a real shop.</div>
+
+<div class="strip" data-barrier="Hard-to-read text">Free next-day delivery on orders over £40 · Order by 3pm</div>
+
+<div class="head">
+  <div class="wrap" data-barrier="Zoom 200%: nav gets chopped">
+    <a class="logo" href="#top">fizz<span>wick</span></a>
+    <div class="nav">
+      <a href="#shop">Balloons</a><a href="#shop">Decorations</a><a href="#shop">Tableware</a><a href="#shop">Birthdays</a><a href="#shop">Weddings</a><a href="#delivery">Delivery</a><a href="#story">About</a>
+    </div>
+    <div class="icons" data-barrier="Icon-only buttons, no labels">
+      <button class="ibtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
+      <button class="ibtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button>
+      <button class="ibtn" type="button" tabindex="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M4 7h16l-1.5 11h-13z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap" id="top">
+  <div class="hero" id="hero" data-barrier="Carousel won't stop · plays automatically">
+    <div class="slide on" style="background:#FFE3EC">
+      <canvas class="art" data-art="balloons"></canvas>
+      <div class="copy" data-barrier="Zoom 200%: text box clips">
+        <div class="eyebrow">New season</div>
+        <div class="big">Pop the fizz, it's party time</div>
+        <div class="lede">Balloons, bunting and everything in between. Delivered tomorrow.</div>
+        <a class="btn" href="#shop" data-barrier="Button fails contrast">Shop now</a>
+      </div>
+    </div>
+    <div class="slide" style="background:#DDF3E8">
+      <canvas class="art" data-art="bunting"></canvas>
+      <div class="copy">
+        <div class="eyebrow">Garden parties</div>
+        <div class="big">Bunting by the metre</div>
+        <div class="lede">Mix and match 40 prints. Cut to any length you like.</div>
+        <a class="btn" href="#shop">Shop now</a>
+      </div>
+    </div>
+    <div class="slide" style="background:#E2EEFF">
+      <canvas class="art" data-art="confetti"></canvas>
+      <div class="copy">
+        <div class="eyebrow">Weddings</div>
+        <div class="big">Confetti that's kind to the planet</div>
+        <div class="lede">Dried petal confetti, fully biodegradable.</div>
+        <a class="btn" href="#shop">Shop now</a>
+      </div>
+    </div>
+    <div class="dots"><i class="on"></i><i></i><i></i></div>
+  </div>
+
+  <div class="sec" id="shop">
+    <div class="title" data-barrier="No real headings">Bestsellers</div>
+    <div class="sub">Our most-loved party bits this month</div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="sec" id="story">
+    <div class="title">Watch and read</div>
+    <div class="split">
+      <div class="video" data-barrier="Video with sound, no captions">
+        <canvas id="vid"></canvas>
+        <div class="vbar">
+          <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+          <div class="track"><div class="fill" id="vfill"></div></div>
+          <span id="vtime">0:00 / 1:24</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>
+        </div>
+      </div>
+      <div class="story" data-barrier="Wall of text · pale body text">Fizzwick started in 2011 at a market stall in Peterborough with three boxes of balloons and a helium tank borrowed from a friend, and since then we've grown into one of the UK's favourite online party shops, shipping over two million balloons, a frankly silly amount of bunting and more confetti than we care to count to birthdays, weddings, baby showers, office leaving dos and the occasional very enthusiastic dog birthday, and we still pack every order by hand in our warehouse where the radio is always on and someone is usually testing a party popper that they definitely shouldn't be, and if you'd like to know more about how we choose our suppliers and why we switched to paper packaging in 2019 you can <a href="#story" data-barrier="Link same colour as text">read our sustainability promise</a>, or if you're planning something big like a wedding or a corporate event our events team can put together a custom bundle with free samples, so <a href="#story" data-barrier="&quot;Click here&quot; link">click here</a> to get in touch and we'll get back to you within one working day, and don't forget that everything comes with our no-quibble 30-day returns because we know plans change and sometimes the theme changes three times before the big day.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="title">Party inspo</div>
+    <!-- Illustrations are embedded so nothing 404s; they deliberately have no alt text. -->
+    <div class="inspo" data-barrier="Images that don't say what they show">
+      <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 200'><rect width='360' height='200' fill='%23FFE3EC'/><path d='M120 137Q130 170 118 200M185 118Q175 160 188 200M245 142Q255 175 243 200' stroke='%238a7a90' stroke-width='2' fill='none'/><ellipse cx='120' cy='85' rx='42' ry='52' fill='%23E0457B'/><ellipse cx='185' cy='70' rx='38' ry='48' fill='%23FFD23F'/><ellipse cx='245' cy='92' rx='40' ry='50' fill='%234C8DF0'/></svg>" width="360" height="200">
+      <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 200'><rect width='360' height='200' fill='%23DDF3E8'/><path d='M0 40Q180 90 360 40M0 120Q180 170 360 120' stroke='%236f6572' stroke-width='3' fill='none'/><path d='M40 58l32 0-16 40zM100 70l32 0-16 40zM160 76l32 0-16 40zM220 70l32 0-16 40zM280 58l32 0-16 40zM40 138l32 0-16 40zM100 150l32 0-16 40zM160 156l32 0-16 40zM220 150l32 0-16 40zM280 138l32 0-16 40z' fill='%23E0457B'/></svg>" width="360" height="200">
+      <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 200'><rect width='360' height='200' fill='%23E2EEFF'/><g fill='%236F5B95'><rect x='40' y='30' width='14' height='8' transform='rotate(20 47 34)'/><rect x='120' y='150' width='14' height='8' transform='rotate(-30 127 154)'/><rect x='220' y='50' width='14' height='8' transform='rotate(60 227 54)'/><rect x='300' y='120' width='14' height='8' transform='rotate(10 307 124)'/></g><g fill='%23FFD23F'><rect x='90' y='70' width='14' height='8' transform='rotate(-40 97 74)'/><rect x='180' y='110' width='14' height='8' transform='rotate(50 187 114)'/><rect x='270' y='40' width='14' height='8' transform='rotate(-10 277 44)'/><rect x='320' y='170' width='14' height='8' transform='rotate(35 327 174)'/></g><g fill='%23E0457B'><rect x='60' y='120' width='14' height='8' transform='rotate(70 67 124)'/><rect x='150' y='30' width='14' height='8' transform='rotate(-20 157 34)'/><rect x='250' y='150' width='14' height='8' transform='rotate(25 257 154)'/><rect x='20' y='170' width='14' height='8' transform='rotate(-55 27 174)'/></g></svg>" width="360" height="200">
+    </div>
+    <div class="posts" data-barrier="Same link text, different places">
+      <div class="post"><div class="pt">How to build a balloon arch in 20 minutes</div><p>All you need is a pump, a roll of tape and some patience.</p><a href="#arch">Read more</a></div>
+      <div class="post"><div class="pt">10 garden party ideas for under £50</div><p>Lanterns, bunting and a very good playlist.</p><a href="#garden">Read more</a></div>
+    </div>
+  </div>
+
+  <div class="sec" id="delivery">
+    <div class="title">Delivery</div>
+    <div class="tablewrap" data-barrier="Table with no header row">
+      <table>
+        <tr><td>Service</td><td>Arrives</td><td>Price</td></tr>
+        <tr><td>Standard</td><td>3 to 5 working days</td><td>£3.95</td></tr>
+        <tr><td>Next day</td><td>Next working day if ordered by 3pm</td><td>£5.95</td></tr>
+        <tr><td>Saturday</td><td>This Saturday if ordered by Thursday</td><td>£7.95</td></tr>
+        <tr><td>Orders over £40</td><td>Next working day</td><td>Free</td></tr>
+      </table>
+    </div>
+    <div class="faq">
+      <div><b>Can I change my order?</b> Yes, within one hour of ordering. After that it may already be packed. For anything else <a href="#faq">click here</a>.</div>
+      <div><b>Do you deliver helium?</b> We don't post helium, but our balloon kits come with a pump.</div>
+      <div><b>Are your balloons latex-free?</b> Our foil range is latex-free. Latex balloons are clearly marked on each product.</div>
+    </div>
+  </div>
+</div>
+
+<div class="foot">
+  <div class="wrap">
+    <div>
+      <div class="logo" style="color:#fff">fizz<span>wick</span></div>
+      <div class="social" data-barrier="Tiny tap targets">
+        <a href="#s" tabindex="1"><svg viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="8"/></svg></a>
+        <a href="#s"><svg viewBox="0 0 24 24" fill="#fff"><rect x="4" y="4" width="16" height="16" rx="4"/></svg></a>
+        <a href="#s"><svg viewBox="0 0 24 24" fill="#fff"><path d="M4 20L12 4l8 16z"/></svg></a>
+        <a href="#s"><svg viewBox="0 0 24 24" fill="#fff"><path d="M3 6h18v12H3z"/></svg></a>
+      </div>
+    </div>
+    <div data-barrier="Tab order jumps around">Help<br><a href="#delivery">Delivery</a><br><a href="#r" tabindex="3">Returns</a><br><a href="#c">Contact us</a></div>
+    <div>Trade customers<br>For bulk orders <a href="#trade">click here</a></div>
+    <div class="fine">Fizzwick Party Co. is a made-up shop, built by Pixel Guides as an AccessLens demo. The barriers on this page are there on purpose.</div>
+  </div>
+</div>
+
+<div class="scrim" id="pop" hidden>
+  <div class="modal" data-barrier="Popup with no findable close">
+    <button class="x" type="button" id="x">×</button>
+    <div class="eyebrow">Get 10% off</div>
+    <div class="big">Join the party list</div>
+    <form id="nl" novalidate>
+      <div data-barrier="Fields labelled only by placeholder">
+        <input id="nl-name" placeholder="First name">
+        <input id="nl-email" placeholder="Email address" type="email">
+      </div>
+      <button class="btn" type="submit" data-barrier="Form error has no message">Sign me up</button>
+    </form>
+  </div>
+</div>
+
+<div class="keybar">Answer key on. Every dashed outline is a planted barrier.</div>
+
+<script>
+(function(){
+  // ---------- products ----------
+  var products = [
+    ['Rose gold balloon bundle', '£12.99', 'in', 'balloons'],
+    ['Pastel paper bunting, 10m', '£8.50', 'out', 'bunting'],
+    ['Confetti cannons, pack of 4', '£9.99', 'in', 'confetti'],
+    ['Happy Birthday cake topper', '£4.25', 'in', 'topper'],
+    ['Striped paper straws x50', '£3.49', 'out', 'straws'],
+    ['Party hats, pack of 8', '£5.99', 'in', 'hats'],
+    ['Gold sparkler candles', '£3.99', 'in', 'candles'],
+    ['Foil number balloon', '£6.50', 'out', 'number']
+  ];
+  var grid = document.getElementById('grid');
+  var html = '';
+  products.forEach(function(p, i){
+    var b = function(label){ return i === 0 ? ' data-barrier="' + label + '"' : ''; };
+    html += '<div class="card">' +
+      '<canvas class="pimg" data-art="' + p[3] + '" style="width:100%;height:190px;display:block;background:#FFF4F8"' + b('Image with no description') + '></canvas>' +
+      '<button class="heart" type="button"' + b('Icon-only button') + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button>' +
+      '<div class="body"><div class="pname">' + p[0] + '</div><div class="price">' + p[1] + '</div>' +
+      '<div class="row"><span class="stock ' + p[2] + '"' + b('Red/green only') + '></span>' +
+      '<div class="sizes"' + b('Tiny tap targets') + '><button type="button">S</button><button type="button">M</button><button type="button">L</button></div></div>' +
+      '<button class="add" type="button">Add to basket</button></div></div>';
+  });
+  grid.innerHTML = html;
+
+  // ---------- simple drawn art ----------
+  var PAL = ['#E0457B','#FFD23F','#6F5B95','#3BB5A0','#4C8DF0','#FF8A3D'];
+  function draw(cv, kind, seed){
+    var r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    var w = Math.max(10, r.width), h = Math.max(10, r.height);
+    cv.width = w * dpr; cv.height = h * dpr;
+    var c = cv.getContext('2d'); c.scale(dpr, dpr);
+    var s = seed || 1; function rnd(){ s = (s * 9301 + 49297) % 233280; return s / 233280; }
+    if (kind === 'balloons' || kind === 'number') {
+      for (var i = 0; i < (kind === 'number' ? 3 : 7); i++) {
+        var x = w * (0.2 + rnd() * 0.65), y = h * (0.25 + rnd() * 0.35), rr = Math.min(w, h) * (0.12 + rnd() * 0.06);
+        c.strokeStyle = '#8a7a90'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x, y + rr * 1.2); c.quadraticCurveTo(x + 10, y + rr * 2.2, x - 4, h); c.stroke();
+        c.fillStyle = PAL[i % PAL.length]; c.beginPath(); c.ellipse(x, y, rr, rr * 1.2, 0, 0, Math.PI * 2); c.fill();
+        c.fillStyle = 'rgba(255,255,255,.45)'; c.beginPath(); c.ellipse(x - rr * .35, y - rr * .45, rr * .2, rr * .3, -.5, 0, Math.PI * 2); c.fill();
+      }
+    } else if (kind === 'bunting') {
+      for (var row = 0; row < 2; row++) {
+        var y0 = h * (0.2 + row * 0.35); c.strokeStyle = '#6f6572'; c.lineWidth = 2;
+        c.beginPath(); c.moveTo(0, y0); c.quadraticCurveTo(w / 2, y0 + 30, w, y0); c.stroke();
+        for (var k = 0; k < 9; k++) {
+          var t = (k + .5) / 9, bx = w * t, by = y0 + 30 * 4 * t * (1 - t) * .5;
+          c.fillStyle = PAL[(k + row) % PAL.length]; c.beginPath(); c.moveTo(bx - 16, by); c.lineTo(bx + 16, by); c.lineTo(bx, by + 38); c.fill();
+        }
+      }
+    } else {
+      var n = kind === 'confetti' ? 90 : 40;
+      for (var j = 0; j < n; j++) {
+        c.save(); c.translate(rnd() * w, rnd() * h); c.rotate(rnd() * 6);
+        c.fillStyle = PAL[j % PAL.length];
+        if (kind === 'straws' || kind === 'candles') c.fillRect(-3, -28, 6, 56);
+        else if (kind === 'hats') { c.beginPath(); c.moveTo(-14, 16); c.lineTo(14, 16); c.lineTo(0, -22); c.fill(); }
+        else c.fillRect(-5, -3, 10, 6);
+        c.restore();
+      }
+    }
+  }
+  function drawAll(){
+    document.querySelectorAll('canvas[data-art]').forEach(function(cv, i){ draw(cv, cv.getAttribute('data-art'), i + 3); });
+  }
+
+  // ---------- fake autoplaying video ----------
+  var vc = document.getElementById('vid'), vfill = document.getElementById('vfill'), vtime = document.getElementById('vtime');
+  var t0 = performance.now();
+  function frame(now){
+    var sec = ((now - t0) / 1000) % 84;
+    var r = vc.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    if (vc.width !== Math.round(r.width * dpr)) { vc.width = r.width * dpr; vc.height = r.height * dpr; }
+    var c = vc.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var w = r.width, h = r.height;
+    c.fillStyle = '#3B1F4A'; c.fillRect(0, 0, w, h);
+    for (var i = 0; i < 6; i++) {
+      var ang = sec * 0.6 + i, x = w * (0.2 + 0.12 * i), y = h * 0.5 + Math.sin(ang) * h * 0.15;
+      c.fillStyle = PAL[i]; c.beginPath(); c.ellipse(x, y, 26, 32, 0, 0, Math.PI * 2); c.fill();
+    }
+    vfill.style.width = (sec / 84 * 100) + '%';
+    var s = Math.floor(sec); vtime.textContent = '0:' + String(s % 60).padStart(2, '0') + ' / 1:24';
+    if (s >= 60) vtime.textContent = '1:' + String(s - 60).padStart(2, '0') + ' / 1:24';
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // ---------- carousel that never stops ----------
+  var slides = document.querySelectorAll('.slide'), dots = document.querySelectorAll('.dots i'), cur = 0;
+  setInterval(function(){
+    slides[cur].classList.remove('on'); dots[cur].classList.remove('on');
+    cur = (cur + 1) % slides.length;
+    slides[cur].classList.add('on'); dots[cur].classList.add('on');
+  }, 3500);
+
+  // ---------- newsletter popup ----------
+  var pop = document.getElementById('pop');
+  setTimeout(function(){ pop.hidden = false; }, 4000);
+  document.getElementById('x').addEventListener('click', function(){ pop.hidden = true; });
+  pop.addEventListener('click', function(e){ if (e.target === pop) pop.hidden = true; });
+  document.getElementById('nl').addEventListener('submit', function(e){
+    e.preventDefault();
+    var em = document.getElementById('nl-email');
+    var ok = /.+@.+\..+/.test(em.value);
+    em.classList.toggle('bad', !ok);            // red border only, no message
+    if (ok) pop.hidden = true;
+  });
+
+  // ---------- presenter answer key: add #answers to the link, or press Shift+A ----------
+  function syncKey(){ document.body.classList.toggle('key', location.hash === '#answers'); }
+  window.addEventListener('hashchange', syncKey); syncKey();
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'A' && e.shiftKey && !/input/i.test(document.activeElement.tagName)) document.body.classList.toggle('key');
+    if (e.key === 'Escape') pop.hidden = true;
+  });
+
+  window.addEventListener('resize', drawAll);
+  drawAll();
+})();
+</script>
+
+</body>
+</html>
